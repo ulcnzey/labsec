@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>LabSec — Security Assessment</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/dashboard.css') }}"
+    >
+</head>
+
+<body>
+
+<div class="app-shell">
+
+    <!-- =========================================================
+         SIDEBAR
+         ========================================================= -->
+
+    <aside class="sidebar" id="sidebar">
+
+        <div class="brand">
+
+            <div class="brand-mark">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+
+            <div class="brand-text">
+                <strong>LABSEC</strong>
+                <small>Security Assessment</small>
+            </div>
+
+        </div>
+
+
+        <nav class="sidebar-nav">
+
+            <div class="nav-section">
+
+                <span class="nav-section-title">
+                    Overview
+                </span>
+
+                <a href="/" class="nav-item active">
+                    <span class="nav-icon">◈</span>
+                    <span>Dashboard</span>
+                </a>
+
+            </div>
+
+
+            <div class="nav-section">
+
+                <span class="nav-section-title">
+                    Security
+                </span>
+
+                <a href="#services" class="nav-item">
+                    <span class="nav-icon">⌁</span>
+                    <span>Services</span>
+                </a>
+
+                <a href="#findings" class="nav-item">
+                    <span class="nav-icon">◇</span>
+                    <span>Vulnerabilities</span>
+                </a>
+
+                <a href="#risk-analysis" class="nav-item">
+                    <span class="nav-icon">◫</span>
+                    <span>Risk Analysis</span>
+                </a>
+
+            </div>
+
+
+            <div class="nav-section">
+
+                <span class="nav-section-title">
+                    Reporting
+                </span>
+
+                <a href="#reports" class="nav-item">
+                    <span class="nav-icon">▤</span>
+                    <span>Reports</span>
+                </a>
+
+            </div>
+
+        </nav>
+
+
+        <!-- Lab Environment -->
+
+        <div class="environment-card">
+
+            <div class="environment-label">
+                <span class="status-dot"></span>
+                Lab Environment
+            </div>
+
+            {% if target %}
+
+                <div class="environment-target">
+                    {{ target["ip_address"] }}
+                </div>
+
+                <div class="environment-description">
+                    Authorized target
+                </div>
+
+            {% else %}
+
+                <div class="environment-target">
+                    No target
+                </div>
+
+                <div class="environment-description">
+                    Waiting for scan
+                </div>
+
+            {% endif %}
+
+        </div>
+
+
+        <div class="sidebar-footer">
+            <span>LabSec</span>
+            <span>v0.1</span>
+        </div>
+
+    </aside>
+
+
+    <!-- =========================================================
+         MAIN CONTENT
+         ========================================================= -->
+
+    <main class="main-content">
+
+        <!-- Topbar -->
+
+        <header class="topbar">
+
+            <div class="topbar-left">
+
+                <button
+                    class="mobile-menu-button"
+                    id="mobileMenuButton"
+                    type="button"
+                    aria-label="Open navigation"
+                >
+                    ☰
+                </button>
+
+                <div>
+                    <span class="topbar-eyebrow">
+                        SECURITY OPERATIONS
+                    </span>
+
+                    <h1>Assessment Dashboard</h1>
+                </div>
+
+            </div>
+
+
+            <div class="topbar-right">
+
+                <div class="system-status">
+                    <span class="status-dot"></span>
+                    System Operational
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- =====================================================
+             TARGET / SCAN HEADER
+             ===================================================== -->
+
+        <section class="target-header">
+
+            <div class="target-header-content">
+
+                <div class="target-title-area">
+
+                    <span class="section-eyebrow">
+                        CURRENT ASSESSMENT
+                    </span>
+
+                    <div class="target-title-row">
+
+                        <h2>
+
+                            {% if target %}
+                                {{ target["ip_address"] }}
+                            {% else %}
+                                No target detected
+                            {% endif %}
+
+                        </h2>
+
+                        <span class="target-badge">
+                            LAB TARGET
+                        </span>
+
+                    </div>
+
+                    <p class="target-description">
+                        Authorized security assessment environment.
+                        Scan network services, identify vulnerabilities
+                        and evaluate security risk.
+                    </p>
+
+                </div>
+
+
+                <!-- Scan Form -->
+
+                <div class="scan-panel">
+
+                    <form
+                        action="/scan"
+                        method="POST"
+                        class="scan-form"
+                    >
+
+                        <label for="target_ip">
+                            Target IP Address
+                        </label>
+
+                        <div class="scan-input-row">
+
+                            <input
+                                type="text"
+                                id="target_ip"
+                                name="target_ip"
+                                placeholder="192.168.56.20"
+                                value="{% if target %}{{ target['ip_address'] }}{% endif %}"
+                                autocomplete="off"
+                                required
+                            >
+
+                            <button
+                                type="submit"
+                                class="scan-button"
+                            >
+                                <span>Scan Target</span>
+                                <span class="scan-arrow">→</span>
+                            </button>
+
+                        </div>
+
+                        <div class="scan-help">
+                            <span class="scan-help-icon">ⓘ</span>
+                            Authorized lab targets only
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             METRICS
+             ===================================================== -->
+
+        <section class="metrics-grid">
+
+            <!-- Open Services -->
+
+            <article class="metric-card">
+
+                <div class="metric-card-top">
+
+                    <span class="metric-label">
+                        Open Services
+                    </span>
+
+                    <span class="metric-icon">
+                        ⌁
+                    </span>
+
+                </div>
+
+                <div class="metric-value">
+                    {{ services|length }}
+                </div>
+
+                <div class="metric-description">
+                    Network services discovered
+                </div>
+
+            </article>
+
+
+            <!-- Vulnerabilities -->
+
+            <article class="metric-card">
+
+                <div class="metric-card-top">
+
+                    <span class="metric-label">
+                        Vulnerabilities
+                    </span>
+
+                    <span class="metric-icon">
+                        ◇
+                    </span>
+
+                </div>
+
+                <div class="metric-value">
+                    {{ vulnerability_count }}
+                </div>
+
+                <div class="metric-description">
+                    Identified security findings
+                </div>
+
+            </article>
+
+
+            <!-- Maximum CVSS -->
+
+            <article class="metric-card">
+
+                <div class="metric-card-top">
+
+                    <span class="metric-label">
+                        Max CVSS
+                    </span>
+
+                    <span class="metric-icon">
+                        ◫
+                    </span>
+
+                </div>
+
+                <div class="metric-value">
+
+                    {% if max_cvss is not none %}
+                        {{ "%.1f"|format(max_cvss) }}
+                    {% else %}
+                        —
+                    {% endif %}
+
+                </div>
+
+                <div class="metric-description">
+                    Highest technical severity
+                </div>
+
+            </article>
+
+
+            <!-- Critical Findings -->
+
+            <article class="metric-card metric-card-critical">
+
+                <div class="metric-card-top">
+
+                    <span class="metric-label">
+                        Critical Findings
+                    </span>
+
+                    <span class="metric-icon">
+                        !
+                    </span>
+
+                </div>
+
+                <div class="metric-value">
+                    {{ critical_count }}
+                </div>
+
+                <div class="metric-description">
+                    Critical severity findings
+                </div>
+
+            </article>
+
+        </section>
+
+
+        <!-- =====================================================
+             ANALYTICS
+             ===================================================== -->
+
+        <section class="analytics-grid" id="risk-analysis">
+
+
+            <!-- Risk Distribution -->
+
+            <article class="panel risk-panel">
+
+                <div class="panel-header">
+
+                    <div>
+
+                        <span class="section-eyebrow">
+                            RISK ANALYSIS
+                        </span>
+
+                        <h3>Risk Distribution</h3>
+
+                    </div>
+
+                    <span class="panel-status">
+                        Current
+                    </span>
+
+                </div>
+
+
+                <div class="risk-content">
+
+                    <div class="risk-ring">
+
+                        <div class="risk-ring-inner">
+
+                            <strong>
+                                {{ risks|length }}
+                            </strong>
+
+                            <span>
+                                Findings
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="risk-legend">
+
+                        <div class="risk-legend-item">
+
+                            <span class="risk-color critical"></span>
+
+                            <div>
+                                <strong>Critical</strong>
+                                <span>
+                                    {{ risk_distribution.get("CRITICAL", 0) }}
+                                </span>
+                            </div>
+
+                        </div>
+
+
+                        <div class="risk-legend-item">
+
+                            <span class="risk-color high"></span>
+
+                            <div>
+                                <strong>High</strong>
+                                <span>
+                                    {{ risk_distribution.get("HIGH", 0) }}
+                                </span>
+                            </div>
+
+                        </div>
+
+
+                        <div class="risk-legend-item">
+
+                            <span class="risk-color medium"></span>
+
+                            <div>
+                                <strong>Medium</strong>
+                                <span>
+                                    {{ risk_distribution.get("MEDIUM", 0) }}
+                                </span>
+                            </div>
+
+                        </div>
+
+
+                        <div class="risk-legend-item">
+
+                            <span class="risk-color low"></span>
+
+                            <div>
+                                <strong>Low</strong>
+                                <span>
+                                    {{ risk_distribution.get("LOW", 0) }}
+                                </span>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </article>
+
+
+            <!-- Latest Findings -->
+
+            <article class="panel findings-panel" id="findings">
+
+                <div class="panel-header">
+
+                    <div>
+
+                        <span class="section-eyebrow">
+                            SECURITY FINDINGS
+                        </span>
+
+                        <h3>Latest Findings</h3>
+
+                    </div>
+
+                    <span class="panel-status">
+                        {{ risks|length }} total
+                    </span>
+
+                </div>
+
+
+                {% if risks %}
+
+                    <div class="findings-list">
+
+                        {% for risk in risks[:5] %}
+
+                            <div class="finding-item">
+
+                                <div class="finding-main">
+
+                                    <div class="finding-cve">
+                                        {{ risk["cve_id"] }}
+                                    </div>
+
+                                    <div class="finding-service">
+
+                                        {{ risk["service"] or "Unknown service" }}
+
+                                        {% if risk["port"] %}
+                                            <span>
+                                                :{{ risk["port"] }}
+                                            </span>
+                                        {% endif %}
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="finding-meta">
+
+                                    <span
+                                        class="severity-badge severity-{{ (risk['risk_level'] or 'LOW')|lower }}"
+                                    >
+                                        {{ risk["risk_level"] or "LOW" }}
+                                    </span>
+
+                                    {% if risk["risk_score"] is not none %}
+
+                                        <strong>
+                                            {{ "%.2f"|format(risk["risk_score"]) }}
+                                        </strong>
+
+                                    {% endif %}
+
+                                </div>
+
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                {% else %}
+
+                    <div class="empty-state">
+
+                        <div class="empty-state-icon">
+                            ◇
+                        </div>
+
+                        <strong>
+                            No findings yet
+                        </strong>
+
+                        <span>
+                            Run a security scan to populate
+                            vulnerability findings.
+                        </span>
+
+                    </div>
+
+                {% endif %}
+
+            </article>
+
+        </section>
+
+
+        <!-- =====================================================
+             SERVICES
+             ===================================================== -->
+
+        <section
+            class="panel services-panel"
+            id="services"
+        >
+
+            <div class="panel-header">
+
+                <div>
+
+                    <span class="section-eyebrow">
+                        DISCOVERY
+                    </span>
+
+                    <h3>Discovered Services</h3>
+
+                </div>
+
+                <span class="panel-status">
+                    {{ services|length }} services
+                </span>
+
+            </div>
+
+
+            {% if services %}
+
+                <div class="table-wrapper">
+
+                    <table class="services-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Port
+                                </th>
+
+                                <th>
+                                    Protocol
+                                </th>
+
+                                <th>
+                                    State
+                                </th>
+
+                                <th>
+                                    Service
+                                </th>
+
+                                <th>
+                                    Product
+                                </th>
+
+                                <th>
+                                    Version
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            {% for service in services %}
+
+                                <tr>
+
+                                    <td>
+                                        <span class="port-number">
+                                            {{ service["port"] }}
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        {{ service["protocol"] }}
+                                    </td>
+
+                                    <td>
+
+                                        <span class="state-badge">
+                                            <span class="status-dot"></span>
+                                            {{ service["state"] }}
+                                        </span>
+
+                                    </td>
+
+                                    <td>
+                                        <strong>
+                                            {{ service["service"] or "—" }}
+                                        </strong>
+                                    </td>
+
+                                    <td>
+                                        {{ service["product"] or "—" }}
+                                    </td>
+
+                                    <td>
+                                        {{ service["version"] or "—" }}
+                                    </td>
+
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            {% else %}
+
+                <div class="empty-state services-empty">
+
+                    <div class="empty-state-icon">
+                        ⌁
+                    </div>
+
+                    <strong>
+                        No services discovered
+                    </strong>
+
+                    <span>
+                        Enter an authorized target IP and start
+                        a security scan.
+                    </span>
+
+                </div>
+
+            {% endif %}
+
+        </section>
+
+
+        <!-- =====================================================
+             SECURITY REPORT
+             ===================================================== -->
+
+        <section
+            class="panel reporting-panel"
+            id="reports"
+        >
+
+            <div class="panel-header">
+
+                <div>
+
+                    <span class="section-eyebrow">
+                        REPORTING
+                    </span>
+
+                    <h3>Security Report</h3>
+
+                </div>
+
+                <span class="panel-status">
+                    Ready
+                </span>
+
+            </div>
+
+
+            <div class="report-placeholder">
+
+                <div class="report-icon">
+                    ▤
+                </div>
+
+                <div>
+
+                    <strong>
+                        Automated security reporting
+                    </strong>
+
+                    <p>
+                        Generate a structured HTML security report
+                        containing scan results, discovered services,
+                        vulnerabilities and risk assessments.
+                    </p>
+
+                </div>
+
+                <form
+                    action="{{ url_for('generate_report_route') }}"
+                    method="GET"
+                >
+
+                    <button
+                        type="submit"
+                        class="primary-button"
+                    >
+                        Generate Security Report
+                    </button>
+
+                </form>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             FOOTER
+             ===================================================== -->
+
+        <footer class="dashboard-footer">
+
+            <div>
+                LabSec Security Assessment Platform
+            </div>
+
+            <div>
+                Authorized laboratory environment
+            </div>
+
+        </footer>
+
+    </main>
+
+</div>
+
+
+<!-- =============================================================
+     JAVASCRIPT
+     ============================================================= -->
+
+<script
+    src="{{ url_for('static', filename='js/dashboard.js') }}"
+></script>
+
+</body>
+</html>
