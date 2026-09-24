@@ -569,6 +569,13 @@ LabSec was developed as part of practical cybersecurity learning and laboratory 
 LabSec v1.0 provides an end-to-end educational security assessment workflow from authorized network discovery to vulnerability research, risk analysis and automated security reporting.
 
 ---
+<img width="1366" height="666" alt="image" src="https://github.com/user-attachments/assets/ebeded34-c69f-44bb-83cc-2abf5a5e8abd" />
+<img width="1360" height="665" alt="image" src="https://github.com/user-attachments/assets/1492300b-4b4e-480a-887e-d12c4c9fb765" />
+<img width="636" height="496" alt="image" src="https://github.com/user-attachments/assets/363ff598-2358-43da-817f-bd499313710b" />
+<img width="630" height="261" alt="image" src="https://github.com/user-attachments/assets/bef56d71-b87a-419e-b2ae-ba8a84f4f782" />
+<img width="637" height="409" alt="image" src="https://github.com/user-attachments/assets/4a88062a-6541-443c-b7bc-58d901126040" />
+<img width="585" height="431" alt="image" src="https://github.com/user-attachments/assets/16ce6ff2-9022-4f38-b8f2-05c290a1ba6c" />
+
 
 ## 📜 License
 
